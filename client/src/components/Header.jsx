@@ -1,4 +1,4 @@
-import {FaSearch} from 'react-icons/fa'
+
 import { Link } from 'react-router-dom'
 
 export default function Header() {
@@ -12,13 +12,12 @@ export default function Header() {
                 <span className="text-blue-500 ">Storage</span>
             </h1>
             </Link>
-            <form className="flex items-center bg-slate-100 border-b-2 border-slate-500 px-2 py-1">
-                <input type="text" placeholder="Search..." className="bg-transparent focus:outline-none w-24 sm:w-64" />
-                <FaSearch className="text-slate-500 " />
+            <form className="flex items-center">
+                <input type="text" placeholder="Search..." className="border-b-2 border-gray-300  p-2 mb-4 focus:outline-none focus:border-blue-500" />
             </form>
             <ul className="flex gap-4">
                 <li><a href="/" className=" hidden sm:inline text-slate-700 hover:text-blue-500">Home</a></li>
-                <li><a href="/signIn" className="text-slate-700 hover:text-blue-500">SignIn</a></li>
+                <li><a href="/login" className="text-slate-700 hover:text-blue-500">Login</a></li>
             </ul>
         </div>
     </header>
