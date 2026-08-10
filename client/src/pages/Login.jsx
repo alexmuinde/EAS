@@ -1,11 +1,13 @@
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { useDispatch, useSelector } from 'react-redux'
+import {loginStart, loginSuccess, loginFailure} from '../redux/user/userSlice'
 
 export default function Login() {
   const[formData, setFormData] = useState({})
-  const [error, setError] = useState(null)
-    const [loading, setLoading] = useState(false)
+  const {loading, error} = useSelector((state) => state.user)
     const navigate = useNavigate()
+    const dispatch = useDispatch()
   
     const handleChange = (e) => {
       setFormData({ ...formData, [e.target.id]: e.target.value })
@@ -14,7 +16,7 @@ export default function Login() {
     const handleSubmit = async (e) => {
       e.preventDefault()
       try {
-        setLoading(true)
+        dispatch(loginStart())
         const res = await fetch('api/auth/login',
           {
             method: 'POST',
@@ -26,20 +28,17 @@ export default function Login() {
         )
         const data = await res.json()
         if(data.success === false) {
-          setLoading(false)
-          setError(data.message)
+          dispatch(loginFailure(data.message))
           return
       }
-      setLoading(false)
-      setError(null)
+      dispatch(loginSuccess(data))
       navigate('/')
       } catch (error) {
-        setLoading(false)
-        setError('An error occurred while logging in.')
+        dispatch(loginFailure(error.message))
       }
       
     }
-    console.log(formData)
+    
   return (
     <div>
       <h1 className='text-3xl text-center font-semibold my-7'>Please Login</h1>
