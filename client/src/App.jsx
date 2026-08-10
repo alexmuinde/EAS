@@ -5,6 +5,7 @@ import Home from './pages/Home'
 import Profile from './pages/Profile'
 import TruckMovementDocument from './pages/TruckMovementDocument'
 import Header from './components/Header'
+import PrivateRoute from './components/PrivateRoute'
 
 export default function App() {
   return <BrowserRouter>
@@ -13,7 +14,9 @@ export default function App() {
       <Route path="/" element={<Home />} />
       <Route path="/login" element={<Login />} />
       <Route path="/signUp" element={<SignUp />} />
-      <Route path="/profile" element={<Profile />} />
+      <Route element={<PrivateRoute />} >
+        <Route path="/profile" element={<Profile />} />
+      </Route>
       <Route path="/truckMovementDocument" element={<TruckMovementDocument />} />
     </Routes>
     

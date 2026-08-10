@@ -1,7 +1,11 @@
 
 import { Link } from 'react-router-dom'
+import {useSelector} from 'react-redux'
 
 export default function Header() {
+  const {currentUser} = useSelector((state) => state.user)
+  
+
   return (
     <header className="bg-slate-400 shadow-md">
         <div className="flex justify-between items-center max-w-6xl mx-auto p-3">
@@ -17,7 +21,13 @@ export default function Header() {
             </form>
             <ul className="flex gap-4">
                 <li><a href="/" className=" hidden sm:inline text-slate-700 hover:text-blue-500">Home</a></li>
-                <li><a href="/login" className="text-slate-700 hover:text-blue-500">Login</a></li>
+                <Link to="/profile" className="  sm:inline text-slate-700 hover:text-blue-500">
+                    {currentUser ? (
+                        <img src={currentUser.avatar} alt="Profile" className="w-8 h-8 rounded-full object-cover" />
+                    ) : (
+                        <li className="sm:inline text-slate-700 hover:text-blue-500">Login</li>
+                    )} 
+                </Link>
             </ul>
         </div>
     </header>
