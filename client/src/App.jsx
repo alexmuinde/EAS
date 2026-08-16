@@ -5,6 +5,7 @@ import Home from './pages/Home'
 import Profile from './pages/Profile'
 import TruckMovementDocument from './pages/TruckMovementDocument'
 import WeighbridgeReceipt from './pages/WeighbridgeReceipt'
+import TruckSafetyInspectionForm from './pages/TruckSafetyInspectionForm'
 import Header from './components/Header'
 import PrivateRoute from './components/PrivateRoute'
 
@@ -19,6 +20,8 @@ export default function App() {
         <Route path="/profile" element={<Profile />} />
         <Route path="/truckMovementDocument/:id?" element={<TruckMovementDocument />} />
         <Route path="/weighbridgeReceipt/:id?" element={<WeighbridgeReceipt />} />
+        <Route path="/truckSafetyInspectionForm/:id?" element={<TruckSafetyInspectionForm />} />
+        
       </Route>
       
     </Routes>
