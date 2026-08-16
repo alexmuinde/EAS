@@ -1,13 +1,18 @@
 import express from 'express';
-import { createDoc, getDoc } from '../controllers/createDocController.js';
+import { genericUpsert } from '../controllers/genericController.js';
+import { getDoc } from '../controllers/truckMovementDocumentController.js';
+import TruckMovementDocument from '../models/truckMovementDocumentModel.js';
 import verifyToken from '../utils/verifyUser.js';
 
 const router = express.Router();
 
-// Route to create document
-router.post('/truckMovementDocument', verifyToken, createDoc);
+// Handle creation (No ID provided)
+router.post('/truckMovementDocument', verifyToken, genericUpsert(TruckMovementDocument));
 
-// Route to fetch document by ID
+// Handle update by ID
+router.put('/truckMovementDocument/:id', verifyToken, genericUpsert(TruckMovementDocument));
+
+// Fetch document by ID
 router.get('/get/:id', verifyToken, getDoc);
 
 export default router;

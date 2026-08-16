@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 
 export default function TruckMovementDocument() {
-  const { id } = useParams();
+  const { id } = useParams()
   const [formData, setFormData] = useState({})
   const [error, setError] = useState(null)
   const [loading, setLoading] = useState(false)
@@ -10,12 +10,13 @@ export default function TruckMovementDocument() {
 
   // 1. Fetch document data on page mount if ID exists in URL
   useEffect(() => {
-    if (!id) return; // If on new document creation path, do nothing
+    if (!id) return;
 
     const fetchDocument = async () => {
       try {
         setLoading(true)
-        const res = await fetch(`/api/createDoc/get/${id}`) // Update path to match your GET route
+        setError(null)
+        const res = await fetch(`/api/createDoc/get/${id}`)
         const data = await res.json()
         
         if (data.success === false) {
@@ -24,7 +25,7 @@ export default function TruckMovementDocument() {
           return
         }
 
-        setFormData(data) // Populate form state with saved MongoDB document
+        setFormData(data)
         setLoading(false)
       } catch (err) {
         setError('Failed to fetch document details.')
@@ -43,13 +44,31 @@ export default function TruckMovementDocument() {
     e.preventDefault()
     try {
       setLoading(true)
-      const res = await fetch('/api/createDoc/truckMovementDocument', {
-        method: 'POST',
+      setError(null)
+
+      // Dynamic HTTP Method & Endpoint configuration
+      const isUpdating = Boolean(id)
+      const method = isUpdating ? 'PUT' : 'POST'
+      const endpoint = isUpdating 
+        ? `/api/createDoc/truckMovementDocument/${id}` 
+        : '/api/createDoc/truckMovementDocument'
+
+      // Clean payload: strip internal database metadata before sending
+      const payload = { ...formData }
+      delete payload._id
+      delete payload.__v
+      delete payload.createdAt
+      delete payload.updatedAt
+      delete payload.userReference
+
+      const res = await fetch(endpoint, {
+        method,
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify(formData)
+        body: JSON.stringify(payload)
       })
+
       const data = await res.json()
       
       if (data.success === false) {
@@ -57,10 +76,17 @@ export default function TruckMovementDocument() {
         setError(data.message)
         return
       }
+
       setLoading(false)
-      setError(null)
-      navigate(`/truckMovementDocument/${data._id}`)
-    } catch (error) {
+      
+      // Extract target ID from returned data wrapper
+      const savedDocId = data.data?._id || data._id || id
+      
+      // If creating a fresh entry, navigate to the newly created document URL
+      if (!id && savedDocId) {
+        navigate(`/truckMovementDocument/${savedDocId}`)
+      }
+    } catch (err) {
       setLoading(false)
       setError('An error occurred while submitting.')
     }
