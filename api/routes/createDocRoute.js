@@ -1,18 +1,21 @@
 import express from 'express';
-import { genericUpsert } from '../controllers/genericController.js';
-import { getDoc } from '../controllers/truckMovementDocumentController.js';
+import { genericUpsert, genericGetDoc } from '../controllers/genericController.js';
+
 import TruckMovementDocument from '../models/truckMovementDocumentModel.js';
+import WeighbridgeReceipt from '../models/weighbridgeReceiptModel.js';
+
 import verifyToken from '../utils/verifyUser.js';
 
 const router = express.Router();
 
-// Handle creation (No ID provided)
+
 router.post('/truckMovementDocument', verifyToken, genericUpsert(TruckMovementDocument));
-
-// Handle update by ID
 router.put('/truckMovementDocument/:id', verifyToken, genericUpsert(TruckMovementDocument));
+router.get('/get/:id', verifyToken, genericGetDoc(TruckMovementDocument));
 
-// Fetch document by ID
-router.get('/get/:id', verifyToken, getDoc);
+
+router.post('/weighbridgeReceipt', verifyToken, genericUpsert(WeighbridgeReceipt));
+router.put('/weighbridgeReceipt/:id', verifyToken, genericUpsert(WeighbridgeReceipt));
+router.get('/weighbridgeReceipt/get/:id', verifyToken, genericGetDoc(WeighbridgeReceipt));
 
 export default router;
