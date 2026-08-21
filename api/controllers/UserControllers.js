@@ -3,8 +3,7 @@ import bcryptjs from "bcryptjs";
 import { errorHandler } from "../utils/error.js";
 
 const updateUser = async (req, res, next) => {
-  console.log("Token User:", req.user);
-console.log("URL Param ID:", req.params.id);
+
 	if (req.user._id !== req.params._id)
 		return next(errorHandler(401, "You can only update your own account!"));
 	try {

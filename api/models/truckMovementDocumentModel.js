@@ -5,6 +5,7 @@ const TruckMovementDocumentSchema = new mongoose.Schema(
     userReference: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
+      required: true,
     },
     // Top Section
     firstTodaysDate: { type: String },

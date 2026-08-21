@@ -16,7 +16,7 @@ export default function TruckMovementDocument() {
       try {
         setLoading(true)
         setError(null)
-        const res = await fetch(`/api/createDoc/get/${id}`)
+        const res = await fetch(`/api/createDoc/truckMovementDocument/get/${id}`) 
         const data = await res.json()
         
         if (data.success === false) {

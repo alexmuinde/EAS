@@ -6,12 +6,8 @@ import { updateUserStart, updateUserSuccess, updateUserFailure } from '../redux/
 
 export default function Profile() {
   const { currentUser, loading, error } = useSelector((state) => state.user);
-  
   const dispatch = useDispatch();
-  
   const[formData, setFormData] = useState({})
-  
-  
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.id]: e.target.value })
@@ -26,10 +22,9 @@ export default function Profile() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
       });
-      console.log(res)
-      console.log(formData)
+      
       const data = await res.json();
-      console.log(data)
+      
 
       if(data.success === false) {
         dispatch(updateUserFailure(data.message));
