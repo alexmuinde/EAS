@@ -1,5 +1,5 @@
 import express from 'express';
-import { genericUpsert, genericGetDoc } from '../controllers/genericController.js';
+import { genericUpsert, genericGetDoc, getUserDocuments } from '../controllers/genericController.js';
 
 import TruckMovementDocument from '../models/truckMovementDocumentModel.js';
 import WeighbridgeReceipt from '../models/weighbridgeReceiptModel.js';
@@ -12,6 +12,18 @@ import VesselDischargeRateReport from '../models/vesselDischargeRateReportModel.
 import verifyToken from '../utils/verifyUser.js';
 
 const router = express.Router();
+
+const allDocumentModels = {
+  truckMovementDocument: TruckMovementDocument,
+  weighbridgeReceipt: WeighbridgeReceipt,
+  truckSafetyInspectionForm: TruckSafetyInspectionForm,
+  shoreTankQuantityReport: ShoreTankQuantityReport,
+  agreedFinalOutturnReport: AgreedFinalOutturnReport,
+  statementOfFactsReport: StatementOfFactsReport,
+  vesselDischargeRateReport: VesselDischargeRateReport,
+};
+
+router.get('/userDocuments/:id', verifyToken, getUserDocuments(allDocumentModels));
 
 // Truck Movement Document
 router.post('/truckMovementDocument', verifyToken, genericUpsert(TruckMovementDocument));

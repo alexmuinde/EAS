@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 
-// Generic Upsert Controller (Create or Update)
+// Existing Upsert Controller
 export const genericUpsert = (Model) => async (req, res, next) => {
   try {
     const { _id, ...updateData } = req.body;
@@ -30,7 +30,7 @@ export const genericUpsert = (Model) => async (req, res, next) => {
   }
 };
 
-// Generic Get Document Controller (Fetch by ID)
+// Existing Get Document Controller
 export const genericGetDoc = (Model) => async (req, res, next) => {
   try {
     const doc = await Model.findById(req.params.id);
@@ -38,6 +38,25 @@ export const genericGetDoc = (Model) => async (req, res, next) => {
       return res.status(404).json({ success: false, message: "Document not found!" });
     }
     res.status(200).json(doc);
+  } catch (error) {
+    next(error);
+  }
+};
+
+// Generic Fetch All User Documents Controller
+export const getUserDocuments = (modelsMap) => async (req, res, next) => {
+  try {
+    const userId = req.params.id;
+
+    const fetchPromises = Object.entries(modelsMap).map(async ([docType, Model]) => {
+      const docs = await Model.find({ userReference: userId }).lean();
+      return docs.map((doc) => ({ ...doc, docType }));
+    });
+
+    const results = await Promise.all(fetchPromises);
+    const allDocs = results.flat().sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
+
+    res.status(200).json(allDocs);
   } catch (error) {
     next(error);
   }
