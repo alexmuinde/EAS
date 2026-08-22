@@ -49,7 +49,28 @@ export const getUserDocuments = (modelsMap) => async (req, res, next) => {
     const userId = req.params.id;
 
     const fetchPromises = Object.entries(modelsMap).map(async ([docType, Model]) => {
-      const docs = await Model.find({ userReference: userId }).lean();
+      const docs = await Model.find({ userReference: userId })
+        .populate('userReference', 'username')
+        .lean();
+      return docs.map((doc) => ({ ...doc, docType }));
+    });
+
+    const results = await Promise.all(fetchPromises);
+    const allDocs = results.flat().sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
+
+    res.status(200).json(allDocs);
+  } catch (error) {
+    next(error);
+  }
+};
+
+// Generic Fetch ALL Created Documents Controller (All Users)
+export const getAllDocuments = (modelsMap) => async (req, res, next) => {
+  try {
+    const fetchPromises = Object.entries(modelsMap).map(async ([docType, Model]) => {
+      const docs = await Model.find()
+        .populate('userReference', 'username')
+        .lean();
       return docs.map((doc) => ({ ...doc, docType }));
     });
 

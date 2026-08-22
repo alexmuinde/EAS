@@ -1,5 +1,10 @@
 import express from 'express';
-import { genericUpsert, genericGetDoc, getUserDocuments } from '../controllers/genericController.js';
+import { 
+  genericUpsert, 
+  genericGetDoc, 
+  getUserDocuments, 
+  getAllDocuments 
+} from '../controllers/genericController.js';
 
 import TruckMovementDocument from '../models/truckMovementDocumentModel.js';
 import WeighbridgeReceipt from '../models/weighbridgeReceiptModel.js';
@@ -23,6 +28,10 @@ const allDocumentModels = {
   vesselDischargeRateReport: VesselDischargeRateReport,
 };
 
+// Route to get all created documents
+router.get('/all', verifyToken, getAllDocuments(allDocumentModels));
+
+// Route to get user specific documents
 router.get('/userDocuments/:id', verifyToken, getUserDocuments(allDocumentModels));
 
 // Truck Movement Document
