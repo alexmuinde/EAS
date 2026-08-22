@@ -1,8 +1,21 @@
-import React, { useState, useEffect } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import { useSelector, useDispatch } from 'react-redux';
+import {
+  fetchDocStart,
+  fetchDocSuccess,
+  fetchDocFailure,
+  saveDocStart,
+  saveDocSuccess,
+  saveDocFailure,
+} from '../redux/document/documentSlice';
 
 export default function ShoreTankQuantityReport() {
-  const { id } = useParams()
+  const { id } = useParams();
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const { loading, error } = useSelector((state) => state.document);
   const [formData, setFormData] = useState({
     todaysDate: '',
     tankNumber: '',
@@ -19,28 +32,23 @@ export default function ShoreTankQuantityReport() {
         weightInAir: '',
       },
     ],
-  })
-  const [error, setError] = useState(null)
-  const [loading, setLoading] = useState(false)
-  const navigate = useNavigate()
+  });
 
   useEffect(() => {
-    if (!id) return
+    if (!id) return;
 
     const fetchDocument = async () => {
       try {
-        setLoading(true)
-        setError(null)
-        const res = await fetch(`/api/createDoc/shoreTankQuantityReport/get/${id}`)
-        const data = await res.json()
+        dispatch(fetchDocStart());
+        const res = await fetch(`/api/createDoc/shoreTankQuantityReport/get/${id}`);
+        const data = await res.json();
 
         if (data.success === false) {
-          setError(data.message)
-          setLoading(false)
-          return
+          dispatch(fetchDocFailure(data.message));
+          return;
         }
 
-        setFormData({
+        const formattedData = {
           ...data,
           dippingSchedule:
             data.dippingSchedule && data.dippingSchedule.length > 0
@@ -55,29 +63,28 @@ export default function ShoreTankQuantityReport() {
                     weightInAir: '',
                   },
                 ],
-        })
-        setLoading(false)
-      } catch (err) {
-        setError('Failed to fetch document details.')
-        setLoading(false)
-      }
-    }
+        };
 
-    fetchDocument()
-  }, [id])
+        setFormData(formattedData);
+        dispatch(fetchDocSuccess(formattedData));
+      } catch (err) {
+        dispatch(fetchDocFailure(err.message || 'Failed to fetch document details.'));
+      }
+    };
+
+    fetchDocument();
+  }, [id, dispatch]);
 
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.id]: e.target.value })
-  }
+    setFormData({ ...formData, [e.target.id]: e.target.value });
+  };
 
-  // Handle dynamic changes inside the dippingSchedule array
   const handleScheduleChange = (index, field, value) => {
-    const updatedSchedule = [...formData.dippingSchedule]
-    updatedSchedule[index] = { ...updatedSchedule[index], [field]: value }
-    setFormData({ ...formData, dippingSchedule: updatedSchedule })
-  }
+    const updatedSchedule = [...formData.dippingSchedule];
+    updatedSchedule[index] = { ...updatedSchedule[index], [field]: value };
+    setFormData({ ...formData, dippingSchedule: updatedSchedule });
+  };
 
-  // Add a new dipping schedule item
   const addDippingSchedule = () => {
     setFormData({
       ...formData,
@@ -92,34 +99,32 @@ export default function ShoreTankQuantityReport() {
           weightInAir: '',
         },
       ],
-    })
-  }
+    });
+  };
 
-  // Remove a dipping schedule item
   const removeDippingSchedule = (index) => {
-    if (formData.dippingSchedule.length === 1) return
-    const updatedSchedule = formData.dippingSchedule.filter((_, i) => i !== index)
-    setFormData({ ...formData, dippingSchedule: updatedSchedule })
-  }
+    if (formData.dippingSchedule.length === 1) return;
+    const updatedSchedule = formData.dippingSchedule.filter((_, i) => i !== index);
+    setFormData({ ...formData, dippingSchedule: updatedSchedule });
+  };
 
   const handleSubmit = async (e) => {
-    e.preventDefault()
+    e.preventDefault();
     try {
-      setLoading(true)
-      setError(null)
+      dispatch(saveDocStart());
 
-      const isUpdating = Boolean(id)
-      const method = isUpdating ? 'PUT' : 'POST'
+      const isUpdating = Boolean(id);
+      const method = isUpdating ? 'PUT' : 'POST';
       const endpoint = isUpdating
         ? `/api/createDoc/shoreTankQuantityReport/${id}`
-        : '/api/createDoc/shoreTankQuantityReport'
+        : '/api/createDoc/shoreTankQuantityReport';
 
-      const payload = { ...formData }
-      delete payload._id
-      delete payload.__v
-      delete payload.createdAt
-      delete payload.updatedAt
-      delete payload.userReference
+      const payload = { ...formData };
+      delete payload._id;
+      delete payload.__v;
+      delete payload.createdAt;
+      delete payload.updatedAt;
+      delete payload.userReference;
 
       const res = await fetch(endpoint, {
         method,
@@ -127,28 +132,26 @@ export default function ShoreTankQuantityReport() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(payload),
-      })
+      });
 
-      const data = await res.json()
+      const data = await res.json();
 
       if (data.success === false) {
-        setLoading(false)
-        setError(data.message)
-        return
+        dispatch(saveDocFailure(data.message));
+        return;
       }
 
-      setLoading(false)
+      dispatch(saveDocSuccess(data));
 
-      const savedDocId = data.data?._id || data._id || id
+      const savedDocId = data.data?._id || data._id || id;
 
       if (!id && savedDocId) {
-        navigate(`/shoreTankQuantityReport/${savedDocId}`)
+        navigate(`/shoreTankQuantityReport/${savedDocId}`);
       }
     } catch (err) {
-      setLoading(false)
-      setError('An error occurred while submitting.')
+      dispatch(saveDocFailure(err.message || 'An error occurred while submitting.'));
     }
-  }
+  };
 
   return (
     <form onSubmit={handleSubmit} className="w-full p-2 gap-2">
@@ -166,7 +169,7 @@ export default function ShoreTankQuantityReport() {
             htmlFor="todaysDate"
             className="block text-xs font-semibold text-gray-600 uppercase mb-1"
           >
-            Todays Date
+            Today's Date
           </label>
           <input
             onChange={handleChange}
@@ -261,7 +264,7 @@ export default function ShoreTankQuantityReport() {
               <button
                 type="button"
                 onClick={() => removeDippingSchedule(index)}
-                className="text-red-500 hover:text-red-700 text-xs font-semibold uppercase p-1"
+                className="text-red-500 hover:text-red-700 text-xs font-semibold uppercase p-1 cursor-pointer"
               >
                 Remove
               </button>
@@ -365,7 +368,7 @@ export default function ShoreTankQuantityReport() {
         <button
           type="button"
           onClick={addDippingSchedule}
-          className="bg-blue-600 text-white rounded-md p-2 hover:bg-blue-700 w-full font-medium"
+          className="bg-blue-600 text-white rounded-md p-2 hover:bg-blue-700 w-full font-medium cursor-pointer"
         >
           + Add More Dipping Schedule
         </button>
@@ -376,10 +379,10 @@ export default function ShoreTankQuantityReport() {
       <button
         disabled={loading}
         type="submit"
-        className="bg-slate-400 rounded-md p-2 hover:bg-slate-500 w-full text-white font-medium my-2"
+        className="bg-slate-400 rounded-md p-2 hover:bg-slate-500 w-full text-white font-medium my-2 disabled:opacity-50 cursor-pointer"
       >
         {loading ? 'Submitting...' : 'Submit'}
       </button>
     </form>
-  )
+  );
 }

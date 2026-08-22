@@ -1,8 +1,22 @@
 import React, { useState, useEffect } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
+import { useSelector, useDispatch } from 'react-redux'
+import {
+  fetchDocStart,
+  fetchDocSuccess,
+  fetchDocFailure,
+  saveDocStart,
+  saveDocSuccess,
+  saveDocFailure,
+} from '../redux/document/documentSlice'
 
 export default function VesselDischargeRateReport() {
   const { id } = useParams()
+  const dispatch = useDispatch()
+  const navigate = useNavigate()
+
+  const { loading, error } = useSelector((state) => state.document)
+
   const [formData, setFormData] = useState({
     vesselName: '',
     dateOfReport: '',
@@ -23,23 +37,18 @@ export default function VesselDischargeRateReport() {
       },
     ],
   })
-  const [error, setError] = useState(null)
-  const [loading, setLoading] = useState(false)
-  const navigate = useNavigate()
 
   useEffect(() => {
     if (!id) return
 
     const fetchDocument = async () => {
       try {
-        setLoading(true)
-        setError(null)
+        dispatch(fetchDocStart())
         const res = await fetch(`/api/createDoc/vesselDischargeRateReport/get/${id}`)
         const data = await res.json()
 
         if (data.success === false) {
-          setError(data.message)
-          setLoading(false)
+          dispatch(fetchDocFailure(data.message))
           return
         }
 
@@ -60,15 +69,14 @@ export default function VesselDischargeRateReport() {
                 },
               ],
         })
-        setLoading(false)
+        dispatch(fetchDocSuccess(data))
       } catch (err) {
-        setError('Failed to fetch document details.')
-        setLoading(false)
+        dispatch(fetchDocFailure(err.message || 'Failed to fetch document details.'))
       }
     }
 
     fetchDocument()
-  }, [id])
+  }, [id, dispatch])
 
   // Top Section Field Handler
   const handleChange = (e) => {
@@ -110,8 +118,7 @@ export default function VesselDischargeRateReport() {
   const handleSubmit = async (e) => {
     e.preventDefault()
     try {
-      setLoading(true)
-      setError(null)
+      dispatch(saveDocStart())
 
       const isUpdating = Boolean(id)
       const method = isUpdating ? 'PUT' : 'POST'
@@ -137,12 +144,11 @@ export default function VesselDischargeRateReport() {
       const data = await res.json()
 
       if (data.success === false) {
-        setLoading(false)
-        setError(data.message)
+        dispatch(saveDocFailure(data.message))
         return
       }
 
-      setLoading(false)
+      dispatch(saveDocSuccess(data))
 
       const savedDocId = data.data?._id || data._id || id
 
@@ -150,8 +156,7 @@ export default function VesselDischargeRateReport() {
         navigate(`/vesselDischargeRateReport/${savedDocId}`)
       }
     } catch (err) {
-      setLoading(false)
-      setError('An error occurred while submitting.')
+      dispatch(saveDocFailure(err.message || 'An error occurred while submitting.'))
     }
   }
 
@@ -270,7 +275,7 @@ export default function VesselDischargeRateReport() {
                 <button
                   type="button"
                   onClick={() => removeDischargeEntry(index)}
-                  className="text-red-500 hover:text-red-700 text-xs font-semibold uppercase"
+                  className="text-red-500 hover:text-red-700 text-xs font-semibold uppercase cursor-pointer"
                 >
                   Remove
                 </button>
@@ -387,7 +392,7 @@ export default function VesselDischargeRateReport() {
         <button
           type="button"
           onClick={addDischargeEntry}
-          className="bg-blue-600 text-white rounded-md p-2 hover:bg-blue-700 w-full font-medium text-xs uppercase"
+          className="bg-blue-600 text-white rounded-md p-2 hover:bg-blue-700 w-full font-medium text-xs uppercase cursor-pointer"
         >
           + Add Entry
         </button>
@@ -398,7 +403,7 @@ export default function VesselDischargeRateReport() {
       <button
         disabled={loading}
         type="submit"
-        className="bg-slate-400 rounded-md p-2 hover:bg-slate-500 w-full text-white font-medium my-2 md:col-span-2"
+        className="bg-slate-400 rounded-md p-2 hover:bg-slate-500 w-full text-white font-medium my-2 md:col-span-2 disabled:opacity-50 cursor-pointer"
       >
         {loading ? 'Submitting...' : 'Submit'}
       </button>

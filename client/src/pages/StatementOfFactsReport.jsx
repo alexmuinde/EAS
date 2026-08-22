@@ -1,8 +1,22 @@
 import React, { useState, useEffect } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
+import { useSelector, useDispatch } from 'react-redux'
+import {
+  fetchDocStart,
+  fetchDocSuccess,
+  fetchDocFailure,
+  saveDocStart,
+  saveDocSuccess,
+  saveDocFailure,
+} from '../redux/document/documentSlice'
 
 export default function StatementOfFactsReport() {
   const { id } = useParams()
+  const dispatch = useDispatch()
+  const navigate = useNavigate()
+
+  const { loading, error } = useSelector((state) => state.document)
+
   const [formData, setFormData] = useState({
     todaysDate: '',
     vessel: '',
@@ -21,23 +35,18 @@ export default function StatementOfFactsReport() {
       },
     ],
   })
-  const [error, setError] = useState(null)
-  const [loading, setLoading] = useState(false)
-  const navigate = useNavigate()
 
   useEffect(() => {
     if (!id) return
 
     const fetchDocument = async () => {
       try {
-        setLoading(true)
-        setError(null)
+        dispatch(fetchDocStart())
         const res = await fetch(`/api/createDoc/statementOfFactsReport/get/${id}`)
         const data = await res.json()
 
         if (data.success === false) {
-          setError(data.message)
-          setLoading(false)
+          dispatch(fetchDocFailure(data.message))
           return
         }
 
@@ -50,15 +59,14 @@ export default function StatementOfFactsReport() {
             ? data.statementEntries
             : [{ todaysDate: '', time: '', particulars: '' }],
         })
-        setLoading(false)
+        dispatch(fetchDocSuccess(data))
       } catch (err) {
-        setError('Failed to fetch document details.')
-        setLoading(false)
+        dispatch(fetchDocFailure(err.message || 'Failed to fetch document details.'))
       }
     }
 
     fetchDocument()
-  }, [id])
+  }, [id, dispatch])
 
   // Basic Field Handler
   const handleChange = (e) => {
@@ -114,8 +122,7 @@ export default function StatementOfFactsReport() {
   const handleSubmit = async (e) => {
     e.preventDefault()
     try {
-      setLoading(true)
-      setError(null)
+      dispatch(saveDocStart())
 
       const isUpdating = Boolean(id)
       const method = isUpdating ? 'PUT' : 'POST'
@@ -141,12 +148,11 @@ export default function StatementOfFactsReport() {
       const data = await res.json()
 
       if (data.success === false) {
-        setLoading(false)
-        setError(data.message)
+        dispatch(saveDocFailure(data.message))
         return
       }
 
-      setLoading(false)
+      dispatch(saveDocSuccess(data))
 
       const savedDocId = data.data?._id || data._id || id
 
@@ -154,8 +160,7 @@ export default function StatementOfFactsReport() {
         navigate(`/statementOfFactsReport/${savedDocId}`)
       }
     } catch (err) {
-      setLoading(false)
-      setError('An error occurred while submitting.')
+      dispatch(saveDocFailure(err.message || 'An error occurred while submitting.'))
     }
   }
 
@@ -232,7 +237,7 @@ export default function StatementOfFactsReport() {
                   <button
                     type="button"
                     onClick={() => removeProduct(index)}
-                    className="text-red-500 hover:text-red-700 text-xs font-semibold uppercase"
+                    className="text-red-500 hover:text-red-700 text-xs font-semibold uppercase cursor-pointer"
                   >
                     Remove
                   </button>
@@ -273,7 +278,7 @@ export default function StatementOfFactsReport() {
           <button
             type="button"
             onClick={addProduct}
-            className="bg-blue-600 text-white rounded-md p-2 hover:bg-blue-700 w-full font-medium text-xs uppercase"
+            className="bg-blue-600 text-white rounded-md p-2 hover:bg-blue-700 w-full font-medium text-xs uppercase cursor-pointer"
           >
             + Add Product & Bill of Lading
           </button>
@@ -294,7 +299,7 @@ export default function StatementOfFactsReport() {
                 <button
                   type="button"
                   onClick={() => removeStatementEntry(index)}
-                  className="text-red-500 hover:text-red-700 text-xs font-semibold uppercase"
+                  className="text-red-500 hover:text-red-700 text-xs font-semibold uppercase cursor-pointer"
                 >
                   Remove
                 </button>
@@ -346,7 +351,7 @@ export default function StatementOfFactsReport() {
         <button
           type="button"
           onClick={addStatementEntry}
-          className="bg-blue-600 text-white rounded-md p-2 hover:bg-blue-700 w-full font-medium"
+          className="bg-blue-600 text-white rounded-md p-2 hover:bg-blue-700 w-full font-medium cursor-pointer"
         >
           + Add Entry
         </button>
@@ -357,7 +362,7 @@ export default function StatementOfFactsReport() {
       <button
         disabled={loading}
         type="submit"
-        className="bg-slate-400 rounded-md p-2 hover:bg-slate-500 w-full text-white font-medium my-2 md:col-span-2"
+        className="bg-slate-400 rounded-md p-2 hover:bg-slate-500 w-full text-white font-medium my-2 md:col-span-2 disabled:opacity-50 cursor-pointer"
       >
         {loading ? 'Submitting...' : 'Submit'}
       </button>
