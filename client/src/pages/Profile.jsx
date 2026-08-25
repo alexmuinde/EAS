@@ -78,6 +78,10 @@ export default function Profile() {
     if (doc.docType === 'weighbridgeReceipt') return 'WEIGHBRIDGE RECEIPT'
     if (doc.docType === 'vesselDischargeRateReport') return 'VESSEL DISCHARGE RATE REPORT'
     if (doc.docType === 'statementOfFactsReport') return 'STATEMENT OF FACTS REPORT'
+    if (doc.docType === 'truckSafetyInspectionForm') return 'TRUCK SAFETY INSPECTION FORM'
+    if (doc.docType === 'truckMovementDocument') return 'TRUCK MOVEMENT DOCUMENT'
+    if (doc.docType === 'shoreTankQuantityReport') return 'SHORE TANK QUANTITY REPORT'
+    if (doc.docType === 'agreedFinalOutturnReport') return 'AGREED FINAL OUTTURN REPORT'
     return doc.docType?.toUpperCase() || 'DOCUMENT'
   }
 
@@ -114,7 +118,7 @@ export default function Profile() {
                 id="username"
                 type="text"
                 placeholder={currentUser.username}
-                className="w-full border-b-2 border-gray-300 p-2 mb-4 focus:outline-none focus:border-blue-500"
+                className="w-full border-b-2 border-gray-300 p-2 mb-4 focus:outline-none focus:border-blue-500 hover:shadow-xl"
               />
               <input
                 onChange={handleChange}
@@ -122,7 +126,7 @@ export default function Profile() {
                 id="email"
                 type="email"
                 placeholder={currentUser.email}
-                className="w-full border-b-2 border-gray-300 p-2 mb-4 focus:outline-none focus:border-blue-500"
+                className="w-full border-b-2 border-gray-300 p-2 mb-4 focus:outline-none focus:border-blue-500 hover:shadow-xl"
               />
               <input
                 onChange={handleChange}
@@ -130,7 +134,7 @@ export default function Profile() {
                 id="password"
                 type="password"
                 placeholder="New Password"
-                className="w-full border-b-2 border-gray-300 p-2 mb-4 focus:outline-none focus:border-blue-500"
+                className="w-full border-b-2 border-gray-300 p-2 mb-4 focus:outline-none focus:border-blue-500 hover:shadow-xl"
               />
             </div>
             <button
@@ -164,7 +168,7 @@ export default function Profile() {
                 <div
                   key={doc._id}
                   onClick={() => navigate(`/${doc.docType}/${doc._id}`)}
-                  className="flex flex-col gap-2 border-2 border-gray-200 p-3 rounded-md shadow-sm hover:shadow-xl hover:border-blue-500 cursor-pointer transition-all"
+                  className="flex flex-col gap-2 border-b-2 border-gray-200 p-2 shadow-md hover:shadow-xl hover:border-blue-500 cursor-pointer transition-all"
                 >
                   <div className="flex justify-between items-center border-b pb-1">
                     <span className="font-semibold text-blue-600 text-xs">

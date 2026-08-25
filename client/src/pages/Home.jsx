@@ -41,6 +41,10 @@ export default function Home() {
     if (doc.docType === 'weighbridgeReceipt') return 'WEIGHBRIDGE RECEIPT';
     if (doc.docType === 'vesselDischargeRateReport') return 'VESSEL DISCHARGE RATE REPORT';
     if (doc.docType === 'statementOfFactsReport') return 'STATEMENT OF FACTS REPORT';
+    if (doc.docType === 'truckSafetyInspectionForm') return 'TRUCK SAFETY INSPECTION FORM';
+    if (doc.docType === 'truckMovementDocument') return 'TRUCK MOVEMENT DOCUMENT';
+    if (doc.docType === 'shoreTankQuantityReport') return 'SHORE TANK QUANTITY REPORT';
+    if (doc.docType === 'agreedFinalOutturnReport') return 'AGREED FINAL OUTTURN REPORT';
     return doc.docType?.toUpperCase() || 'DOCUMENT';
   };
 
@@ -59,7 +63,7 @@ export default function Home() {
 
   return (
     <div className="max-w-4xl mx-auto p-4">
-      <div className="flex flex-col gap-4 border-2 border-gray-200 p-4 rounded-lg shadow-md hover:shadow-xl bg-white">
+      <div className="flex flex-col gap-4 border-b-2 border-gray-200 p-4 shadow-md hover:shadow-xl bg-white">
         <div className="p-2 w-full border-b-2 border-gray-100">
           <h4 className="text-center font-bold uppercase text-gray-800 text-lg">
             All Recent Documents
@@ -76,20 +80,18 @@ export default function Home() {
         <div className="flex flex-col gap-3 max-h-[70vh] overflow-y-auto pr-1">
           {documents.map((doc) => {
             const summary = getSummaryFields(doc);
-            // Get username from populated object or fallback
             const creatorUsername = doc.userReference?.username || 'Unknown User';
 
             return (
               <div
                 key={doc._id}
                 onClick={() => navigate(`/${doc.docType}/${doc._id}`)}
-                className="flex flex-col gap-2 border-2 border-gray-200 p-3 rounded-md shadow-sm hover:shadow-xl hover:border-blue-500 cursor-pointer transition-all"
+                className="flex flex-col gap-2 border-b-2 border-gray-200 p-2 shadow-md hover:shadow-xl hover:border-blue-500 cursor-pointer transition-all"
               >
                 <div className="flex justify-between items-center border-b pb-1">
                   <span className="font-semibold text-blue-600 text-xs">
                     {getDocumentTitle(doc)}
                   </span>
-                  {/* Replaced date with user name */}
                   <span className="text-xs text-gray-500 font-medium">
                     By: <span className="font-semibold text-gray-700">{creatorUsername}</span>
                   </span>

@@ -3,7 +3,8 @@ import {
   genericUpsert, 
   genericGetDoc, 
   getUserDocuments, 
-  getAllDocuments 
+  getAllDocuments,
+  searchAllDocuments 
 } from '../controllers/genericController.js';
 
 import TruckMovementDocument from '../models/truckMovementDocumentModel.js';
@@ -30,6 +31,9 @@ const allDocumentModels = {
 
 // Route to get all created documents
 router.get('/all', verifyToken, getAllDocuments(allDocumentModels));
+
+// Route to search documents by input content values (truck, product, client, etc.)
+router.get('/search', verifyToken, searchAllDocuments(allDocumentModels));
 
 // Route to get user specific documents
 router.get('/userDocuments/:id', verifyToken, getUserDocuments(allDocumentModels));

@@ -82,3 +82,40 @@ export const getAllDocuments = (modelsMap) => async (req, res, next) => {
     next(error);
   }
 };
+
+// Generic Search Documents Controller across all dynamic fields
+export const searchAllDocuments = (modelsMap) => async (req, res, next) => {
+  try {
+    const { searchTerm } = req.query;
+    if (!searchTerm) {
+      return res.status(200).json([]);
+    }
+
+    const regex = new RegExp(searchTerm, 'i');
+
+    const fetchPromises = Object.entries(modelsMap).map(async ([docType, Model]) => {
+      // Retrieve documents and lean convert for field inspection
+      const docs = await Model.find()
+        .populate('userReference', 'username')
+        .lean();
+
+      // Filter documents where any string/number field matches the search regex
+      const matchingDocs = docs.filter((doc) => {
+        return Object.entries(doc).some(([key, val]) => {
+          if (['_id', '__v', 'userReference', 'createdAt', 'updatedAt'].includes(key)) return false;
+          if (val === null || val === undefined) return false;
+          return regex.test(String(val));
+        });
+      });
+
+      return matchingDocs.map((doc) => ({ ...doc, docType }));
+    });
+
+    const results = await Promise.all(fetchPromises);
+    const sortedResults = results.flat().sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
+
+    res.status(200).json(sortedResults);
+  } catch (error) {
+    next(error);
+  }
+};
