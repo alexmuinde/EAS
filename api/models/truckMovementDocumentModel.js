@@ -11,7 +11,7 @@ const TruckMovementDocumentSchema = new mongoose.Schema(
     firstTodaysDate: { type: String },
     firstClient: { type: String },
     firstTruckNumber: { type: String },
-    transpoter: { type: String },
+    transporter: { type: String },
 
     // Security Section
     secondTodaysDate: { type: String },
@@ -23,13 +23,13 @@ const TruckMovementDocumentSchema = new mongoose.Schema(
     securityName: { type: String },
     driversName: { type: String },
     idNumber: { type: String },
-    firtTimeIn: { type: String },
+    firstTimeIn: { type: String },
     inspectedBy: { type: String },
     timeChecked: { type: String },
     firstProduct: { type: String },
 
     // Surveyor/Driver/Clerk Section
-    firstCompatment: { type: String },
+    firstCompartment: { type: String },
 
     // Weighing Personnel Section
     firstName: { type: String },
@@ -52,7 +52,7 @@ const TruckMovementDocumentSchema = new mongoose.Schema(
     thirdName: { type: String },
 
     // Dispatch Personnel Section
-    forthName: { type: String },
+    fourthName: { type: String },
   },
   { timestamps: true }
 );

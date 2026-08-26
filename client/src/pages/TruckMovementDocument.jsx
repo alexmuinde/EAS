@@ -148,15 +148,15 @@ export default function TruckMovementDocument() {
         </div>
 
         <div>
-          <label htmlFor="transpoter" className="block text-xs font-semibold text-gray-600 uppercase mb-1">
+          <label htmlFor="transporter" className="block text-xs font-semibold text-gray-600 uppercase mb-1">
             Transporter
           </label>
           <input
             onChange={handleChange}
-            id="transpoter"
+            id="transporter"
             type="text"
-            value={formData.transpoter || ''}
-            placeholder="Transpoter"
+            value={formData.transporter || ''}
+            placeholder="Transporter"
             className="w-full border-b-2 border-gray-300 p-2 focus:outline-none focus:border-blue-500 hover:shadow-xl"
           />
         </div>
@@ -274,14 +274,14 @@ export default function TruckMovementDocument() {
         </div>
 
         <div>
-          <label htmlFor="firtTimeIn" className="block text-xs font-semibold text-gray-600 uppercase mb-1">
+          <label htmlFor="firstTimeIn" className="block text-xs font-semibold text-gray-600 uppercase mb-1">
             Time In
           </label>
           <input
             onChange={handleChange}
-            id="firtTimeIn"
+            id="firstTimeIn"
             type="time"
-            value={formData.firtTimeIn || ''}
+            value={formData.firstTimeIn || ''}
             placeholder="Time In"
             className="w-full border-b-2 border-gray-300 p-2 focus:outline-none focus:border-blue-500 hover:shadow-xl"
           />
@@ -336,14 +336,14 @@ export default function TruckMovementDocument() {
           <h3 className="font-medium text-wrap p-2 text-center">SURVEYOR/DRIVER/CLERK</h3>
         </div>
         <div className="col-span-2">
-          <label htmlFor="firstCompatment" className="block text-xs font-semibold text-gray-600 uppercase mb-1">
+          <label htmlFor="firstCompartment" className="block text-xs font-semibold text-gray-600 uppercase mb-1">
             First Compartment
           </label>
           <input
             onChange={handleChange}
-            id="firstCompatment"
+            id="firstCompartment"
             type="text"
-            value={formData.firstCompatment || ''}
+            value={formData.firstCompartment || ''}
             placeholder="First Compartment"
             className="w-full border-b-2 border-gray-300 p-2 focus:outline-none focus:border-blue-500 hover:shadow-xl"
           />
@@ -551,14 +551,14 @@ export default function TruckMovementDocument() {
           <h3 className="font-medium text-wrap p-2 text-center">DISPATCH PERSONNEL</h3>
         </div>
         <div className="col-span-2">
-          <label htmlFor="forthName" className="block text-xs font-semibold text-gray-600 uppercase mb-1">
+          <label htmlFor="fourthName" className="block text-xs font-semibold text-gray-600 uppercase mb-1">
             Name
           </label>
           <input
             onChange={handleChange}
-            id="forthName"
+            id="fourthName"
             type="text"
-            value={formData.forthName || ''}
+            value={formData.fourthName || ''}
             placeholder="Name"
             className="w-full border-b-2 border-gray-300 p-2 focus:outline-none focus:border-blue-500 hover:shadow-xl"
           />

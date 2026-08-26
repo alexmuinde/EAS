@@ -49,17 +49,55 @@ export default function Home() {
   };
 
   const getSummaryFields = (doc) => {
-    const fields = [];
+  const fields = [];
 
-    if (doc.weighbridgeReceipt) fields.push({ label: 'Receipt No', value: doc.weighbridgeReceipt });
-    if (doc.truckNumber) fields.push({ label: 'Truck No', value: doc.truckNumber });
-    if (doc.vesselName || doc.vessel) fields.push({ label: 'Vessel', value: doc.vesselName || doc.vessel });
-    if (doc.product) fields.push({ label: 'Product', value: doc.product });
-    if (doc.portName) fields.push({ label: 'Port', value: doc.portName });
-    if (doc.todaysDate || doc.dateOfReport) fields.push({ label: 'Date', value: doc.todaysDate || doc.dateOfReport });
+  if (doc.docType === 'truckMovementDocument') {
+    if (doc.firstTruckNumber || doc.secondTruckNumber || doc.truckNumber) {
+      fields.push({
+        label: 'Truck No',
+        value: doc.firstTruckNumber || doc.secondTruckNumber || doc.truckNumber,
+      });
+    }
+    if (doc.driversName) {
+      fields.push({ label: 'Driver', value: doc.driversName });
+    }
+    if (doc.transporter) {
+      fields.push({ label: 'Transporter', value: doc.transporter });
+    }
+    if (doc.firstClient || doc.secondClient || doc.client) {
+      fields.push({
+        label: 'Client',
+        value: doc.firstClient || doc.secondClient || doc.client,
+      });
+    }
+    if (doc.firstProduct || doc.secondProduct || doc.thirdProduct) {
+      fields.push({
+        label: 'Product',
+        value: doc.firstProduct || doc.secondProduct || doc.thirdProduct,
+      });
+    }
+    if (doc.firstTodaysDate || doc.secondTodaysDate || doc.thirdTodaysDate) {
+      fields.push({
+        label: 'Date',
+        value: doc.firstTodaysDate || doc.secondTodaysDate || doc.thirdTodaysDate,
+      });
+    }
 
     return fields.slice(0, 3);
-  };
+  }
+
+  // Fallback for other document types
+  if (doc.weighbridgeReceipt) fields.push({ label: 'Receipt No', value: doc.weighbridgeReceipt });
+  if (doc.truckNumber || doc.firstTruckNumber) fields.push({ label: 'Truck No', value: doc.truckNumber || doc.firstTruckNumber });
+  if (doc.vesselName || doc.vessel) fields.push({ label: 'Vessel', value: doc.vesselName || doc.vessel });
+  if (doc.product || doc.firstProduct) fields.push({ label: 'Product', value: doc.product || doc.firstProduct });
+  if (doc.portName) fields.push({ label: 'Port', value: doc.portName });
+  if (doc.todaysDate || doc.dateOfReport || doc.firstTodaysDate) {
+    fields.push({ label: 'Date', value: doc.todaysDate || doc.dateOfReport || doc.firstTodaysDate });
+  }
+
+  return fields.slice(0, 3);
+};
 
   return (
     <div className="max-w-4xl mx-auto p-4">
