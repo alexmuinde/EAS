@@ -29,12 +29,58 @@ export default function Header() {
 
   const getSummaryFields = (doc) => {
     const fields = [];
+
+    // Dedicated mapping for Truck Movement Document matching your schema fields
+    if (doc.docType === 'truckMovementDocument') {
+      if (doc.firstTruckNumber || doc.secondTruckNumber || doc.truckNumber) {
+        fields.push({
+          label: 'Truck No',
+          value: doc.firstTruckNumber || doc.secondTruckNumber || doc.truckNumber,
+        });
+      }
+      if (doc.driversName) {
+        fields.push({ label: 'Driver', value: doc.driversName });
+      }
+      if (doc.transporter || doc.transpoter) {
+        fields.push({ label: 'Transporter', value: doc.transporter || doc.transpoter });
+      }
+      if (doc.firstClient || doc.secondClient || doc.client) {
+        fields.push({
+          label: 'Client',
+          value: doc.firstClient || doc.secondClient || doc.client,
+        });
+      }
+      if (doc.firstProduct || doc.secondProduct || doc.thirdProduct) {
+        fields.push({
+          label: 'Product',
+          value: doc.firstProduct || doc.secondProduct || doc.thirdProduct,
+        });
+      }
+      if (doc.firstTodaysDate || doc.secondTodaysDate || doc.thirdTodaysDate) {
+        fields.push({
+          label: 'Date',
+          value: doc.firstTodaysDate || doc.secondTodaysDate || doc.thirdTodaysDate,
+        });
+      }
+
+      return fields.slice(0, 3);
+    }
+
+    // Fallback extraction for other document types
     if (doc.weighbridgeReceipt) fields.push({ label: 'Receipt No', value: doc.weighbridgeReceipt });
-    if (doc.truckNumber) fields.push({ label: 'Truck No', value: doc.truckNumber });
+    if (doc.truckNumber || doc.firstTruckNumber) fields.push({ label: 'Truck No', value: doc.truckNumber || doc.firstTruckNumber });
     if (doc.vesselName || doc.vessel) fields.push({ label: 'Vessel', value: doc.vesselName || doc.vessel });
-    if (doc.product) fields.push({ label: 'Product', value: doc.product });
-    if (doc.transpoter || doc.client) fields.push({ label: 'Client/Transporter', value: doc.transpoter || doc.client });
-    if (doc.todaysDate || doc.dateOfReport) fields.push({ label: 'Date', value: doc.todaysDate || doc.dateOfReport });
+    if (doc.product || doc.firstProduct) fields.push({ label: 'Product', value: doc.product || doc.firstProduct });
+    if (doc.transporter || doc.transpoter || doc.firstClient || doc.client) {
+      fields.push({
+        label: 'Client/Transporter',
+        value: doc.transporter || doc.transpoter || doc.firstClient || doc.client,
+      });
+    }
+    if (doc.todaysDate || doc.dateOfReport || doc.firstTodaysDate) {
+      fields.push({ label: 'Date', value: doc.todaysDate || doc.dateOfReport || doc.firstTodaysDate });
+    }
+
     return fields.slice(0, 3);
   };
 
@@ -74,7 +120,7 @@ export default function Header() {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  // Your title search navigation logic
+  // Title search navigation logic
   const handleSearchSubmit = (e) => {
     e.preventDefault();
     if (!searchTerm.trim()) return;
